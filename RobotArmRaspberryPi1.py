@@ -5,12 +5,156 @@ Created on Sun Feb 11 22:42:02 2018
 @author: Andrew
 """
 
-import smbus, time, math, numpy
+import smbus, numpy
 
+from math import sin, cos, pi
 from ServoClass import Pi_servo
 
 
+def read_keyboard(Desired_pose,grip_value):
+    
+    (X,Y,Z,P) = Desired_pose
+    #Get input key
+    key = getch.getch()
+    #Decide
+    if key == 'k':
+        on = False
+        print('terminating robot arm')
+    elif key == 'a':
+        Y = Y + 5
+    elif key == 'w':
+        X = X + 5
+    elif key == 's':
+        X = X - 5
+    elif key == 'd':
+        Y = Y - 5
+    elif key == 'e':
+        Z = Z + 5
+    elif key == 'q':
+        Z = Z - 5
+    elif key == 'u':
+        P = P + 5*pi/180
+    elif key == 'j':
+        P = P - 5*pi/180
+    elif key == 'g':
+        #toggle open close
+        if grip_value == 550:
+            grip_value = 1000
+        elif grip_value == 1000:
+            grip_value = 550
+    
+    elif key == 'k':
+        on = False
+            
+    Desired_pose = (X,Y,Z,P)
 
+    return (Desired_pose,grip_value,on);
+
+
+
+def read_arm():
+    return 0;
+
+
+
+def DH_matrix(theta,d,a,alpha):
+    #A = Rz(theta)*Tz(d)*Tx(a)*Rx(alpha)
+    A = numpy.matrix([[cos(theta), -sin(theta)*cos(alpha),  sin(theta)*cos(alpha), a*cos(theta)],
+                      [sin(theta),  cos(theta)*cos(alpha), -cos(theta)*cos(alpha), a*sin(theta)],
+                      [0,           sin(alpha),             cos(alpha),            d],
+                      [0,           0,                      0,                     1]])
+    return A;
+    
+    
+def ForwardKinematics(joint_values,arm_lengths):
+    q1,q2,q3,q4 = joint_values
+    l1,l2,l3,l4 = arm_lengths
+    
+    baseTjoint1 = DH_matrix(q1,l1,0,pi/2)
+    joint1Tjoint2 = DH_matrix(q2,0,l2,0)
+    joint2Tjoint3 = DH_matrix(q3,0,l3,0)
+    joint3Tgripper = DH_matrix(q4,0,l4,0)
+    
+    baseTgripper = numpy.dot(numpy.dot(numpy.dot(baseTjoint1,joint1Tjoint2),joint2Tjoint3),joint3Tgripper)
+    
+    x = baseTgripper[0,3], y = baseTgripper[1,3], z = baseTgripper[2,3]
+    
+    pitch = q2 + q3 + q4
+    
+    return (x,y,z,pitch);  
+
+  
+
+def compute_error(Desired_pose,tool_point):
+    (X,Y,Z,P) = Desired_pose
+    (x,y,z,p) = tool_point
+    
+    error = (X-x, Y-y, Z-z, P-p) 
+    
+    return error; 
+
+
+
+def compute_Jacobian(joint_values,arm_lengths):
+
+     (q1,q2,q3,q4) = joint_values
+     (lo,l1,l2,l3) = arm_lengths
+     #Content from MATLAB jacobian symbolic toolbox
+     1_1 = (l2*sin(q2 - q1 + q3))/2 - sin(q1 + q2)/2 - (l3*sin(q1 + q2 + q3 + q4))/2 + (l3*sin(q2 - q1 + q3 + q4))/2 - (l1*sin(q1 - q2))/2 - (l2*sin(q1 + q2 + q3))/2
+     1_2 = (l1*sin(q1 - q2))/2 - (l2*sin(q2 - q1 + q3))/2 - (l3*sin(q1 + q2 + q3 + q4))/2 - (l3*sin(q2 - q1 + q3 + q4))/2 - sin(q1 + q2)/2 - (l2*sin(q1 + q2 + q3))/2
+     1_3 = -(l2*sin(q2 - q1 + q3))/2 - (l3*sin(q1 + q2 + q3 + q4))/2 - (l3*sin(q2 - q1 + q3 + q4))/2 - (l2*sin(q1 + q2 + q3))/2
+     1_4 = -(l3*(sin(q1 + q2 + q3 + q4) + sin(q2 - q1 + q3 + q4)))/2
+     
+     2_1 = cos(q1)*(l2*cos(q2 + q3) + l1*cos(q2) + l3*cos(q2 + q3 + q4))
+     2_2 = -sin(q1)*(l2*sin(q2 + q3) + l1*sin(q2) + l3*sin(q2 + q3 + q4))
+     2_3 = (l3*cos(q1 + q2 + q3 + q4))/2 - (l2*cos(q2 - q1 + q3))/2 - (l3*cos(q2 - q1 + q3 + q4))/2 + (l2*cos(q1 + q2 + q3))/2
+     2_4 = (l3*(cos(q1 + q2 + q3 + q4) - cos(q2 - q1 + q3 + q4)))/2
+     
+     3_1 = 0
+     3_2 = l2*cos(q2 + q3) + l1*cos(q2) + l3*cos(q2 + q3 + q4)
+     3_3 = l2*cos(q2 + q3) + l3*cos(q2 + q3 + q4)
+     3_4 = l2*cos(q2 + q3) + l3*cos(q2 + q3 + q4),   l3*cos(q2 + q3 + q4)
+     
+     4_1 = 0
+     4_2 = 1
+     4_3 = 1
+     4_4 = 1
+ 
+     J = numpy.matrix([[1_1,1_2,1_3,1_4],
+                       [2_1,2_2,2_3,2_4],
+                       [3_1,3_2,3_3,3_4],
+                       [4_1,4_2,4_3,4_4]])
+
+     return 0;
+ 
+    
+
+def damped_least_squares(J, joint_values, joint_mins, joint_maxs):   
+    c = 1; p = 2; w = 1;
+
+    lambda = eye(size(J));
+
+    for ii = 1:length(Q)
+        num = 2*Q(ii)-Qmax(ii)-Qmin(ii);
+        den = Qmax(ii) - Qmin(ii);
+        lambda(ii,ii) = c*(num/den)^p + w;
+
+    invJ = J'/(J*J'+lambda^2);
+    
+    
+    return 0;
+
+def update_joints(joint_values,dQ):
+    return 0;
+
+def joint_limiter(new_joint_values):
+    return 0;
+
+def move_arm(new_joint_values):
+    return 0;
+
+def Reset_robot_arm():
+    return 0;
 
 
 # ***** MAIN ***** #
@@ -23,6 +167,8 @@ if __name__ == "__main__":
     bus.write_byte_data(addr, 0, 0x20)     # enable the chip
     bus.write_byte_data(addr, 0xfe, 0x1e)  # configure the chip for multi-byte write
     
+    #Measure arm segments l1,l2,l3,l4
+    arm_lengths = (100,100,100,100)
     
     #initialise the servos
     m1 = Pi_servo()
@@ -43,34 +189,42 @@ if __name__ == "__main__":
     m4.start_servo(bus)
     m5.start_servo(bus)
 
+    #Determine initial position set the desired pose there
+    joint_values = read_arm(m1,m2,m3,m4)
+    
+    Desired_pose = ForwardKinematics(joint_values,arm_lengths)
+
     #While loop for the control
-    on = true;
+    on = True;
     
     while(on):
         
-        #Get input key
-        key = raw_input()
-        #Decide
-        if key == 'k':
-            on = false
-            print('terminating robot arm')
-        elif key == 'a':
-            Y = Y + 5
-        elif key == 'w':
-            X = X + 5
-        elif key == 's':
-            X = X - 5
-        elif key == 'd':
-            Y = Y - 5
-        elif key == 'u':
-            Z = Z + 5
-        elif key == 'j':
-            Z = Z - 5
-        elif key == 'e':
-            #toggle open close
-
+        (Desired_pose,grip_value,on) = read_keyboard(Desired_pose)
         
-    
+        joint_values = read_arm()
+        
+        tool_point = ForwardKinematics(joint_values,arm_lengths)
+        
+        dX = compute_error(Desired_pose,tool_point)
+        
+        J = compute_Jacobian(joint_values,arm_lengths)
+        
+        inv_J = damped_least_squares(J, joint_values, joint_mins, joint_maxs)
+        
+        dQ = numpy.dot(inv_J,dX)
+        
+        new_joint_values = update_joints(joint_values,dQ)
+        
+        new_joint_values = joint_limiter(new_joint_values)
+        
+        move_arm(new_joint_values,m1,m2,m3,m4)
+        
+        gripper(grip_value)
+        
+        
+    print('TERMINATING ROBOT ARM')   
+    Reset_robot_arm(m1,m2,m3,m4,m5)
+
 
 """ Matlab code for robot arm
 
