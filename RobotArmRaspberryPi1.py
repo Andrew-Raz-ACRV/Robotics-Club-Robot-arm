@@ -45,16 +45,11 @@ def read_keyboard(Desired_pose,grip_value):
     
     elif key == 'k':
         on = False
-            
+     
+    #Update target pose after key presses
     Desired_pose = (X,Y,Z,P)
 
     return (Desired_pose,grip_value,on);
-
-
-
-def read_arm():
-    return 0;
-
 
 
 def DH_matrix(theta,d,a,alpha):
@@ -75,7 +70,7 @@ def ForwardKinematics(joint_values,arm_lengths):
     joint2Tjoint3 = DH_matrix(q3,0,l3,0)
     joint3Tgripper = DH_matrix(q4,0,l4,0)
     
-    baseTgripper = numpy.dot(numpy.dot(numpy.dot(baseTjoint1,joint1Tjoint2),joint2Tjoint3),joint3Tgripper)
+    baseTgripper = numpy.multi_dot(baseTjoint1,joint1Tjoint2,joint2Tjoint3,joint3Tgripper)
     
     x = baseTgripper[0,3], y = baseTgripper[1,3], z = baseTgripper[2,3]
     
@@ -89,7 +84,7 @@ def compute_error(Desired_pose,tool_point):
     (X,Y,Z,P) = Desired_pose
     (x,y,z,p) = tool_point
     
-    error = (X-x, Y-y, Z-z, P-p) 
+    error = numpy.matrix([[X-x], [Y-y], [Z-z], [P-p]]) 
     
     return error; 
 
@@ -125,29 +120,33 @@ def compute_Jacobian(joint_values,arm_lengths):
                        [3_1,3_2,3_3,3_4],
                        [4_1,4_2,4_3,4_4]])
 
-     return 0;
+     return J;
  
     
 
-def damped_least_squares(J, joint_values, joint_mins, joint_maxs):   
+def damped_least_squares(J, Q, Qmin, Qmax):   
     c = 1; p = 2; w = 1;
 
-    lambda = eye(size(J));
-
-    for ii = 1:length(Q)
-        num = 2*Q(ii)-Qmax(ii)-Qmin(ii);
-        den = Qmax(ii) - Qmin(ii);
-        lambda(ii,ii) = c*(num/den)^p + w;
-
-    invJ = J'/(J*J'+lambda^2);
+    Lambda = numpy.identity(4)
     
+    #Construct the the dampening matrix Lambda
+    for ii in range(0,4):
+        num = 2*Q[ii]-Qmax[ii]-Qmin[ii];
+        den = Qmax[ii] - Qmin[ii];
+        Lambda[ii,ii] = c*[num/den]^p + w;
+
+    #Compute the damped least squares inverse
+    J_dash = J.transpose
+    DL = numpy.dot(Lambda,Lambda)
+    dampening = numpy.dot(J,J_dash) + DL
     
-    return 0;
+    invJ = numpy.dot(J_dash,numpy.linalg.inv(dampening));
+    
+    return invJ;
+
+#Literally some functions to simplify code even further
 
 def update_joints(joint_values,dQ):
-    return 0;
-
-def joint_limiter(new_joint_values):
     return 0;
 
 def move_arm(new_joint_values):
@@ -156,6 +155,8 @@ def move_arm(new_joint_values):
 def Reset_robot_arm():
     return 0;
 
+def read_arm():
+    return 0;
 
 # ***** MAIN ***** #
 if __name__ == "__main__":
@@ -178,10 +179,10 @@ if __name__ == "__main__":
     m5 = Pi_servo()
     
     m1._init_channel(0)
-    m2._init_channel(3)
-    m3._init_channel(4)
-    m4._init_channel(7)
-    m5._init_channel(8)
+    m2._init_channel(1)
+    m3._init_channel(2)
+    m4._init_channel(3)
+    m5._init_channel(4)
 
     m1.start_servo(bus)
     m2.start_servo(bus)
