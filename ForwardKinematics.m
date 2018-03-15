@@ -1,6 +1,6 @@
 function ForwardKinematics()
 clf
-[x,y,z,~] = forwardkinematics(deg2rad(0),deg2rad(0),deg2rad(0),deg2rad(0));
+[x,y,z,~] = forwardkinematics(deg2rad(45),deg2rad(120),deg2rad(-100),deg2rad(-90));
     
 display(x)
 display(y)
@@ -18,8 +18,8 @@ function frame1_T_frame2 = DH_params(theta,d,a,alpha)
 
 % A = Rz(theta)*Tz(d)*Tx(a)*Rx(alpha)
 
-frame1_T_frame2 = [cos(theta) -sin(theta)*cos(alpha)  sin(theta)*cos(alpha) a*cos(theta);
-                   sin(theta)  cos(theta)*cos(alpha) -cos(theta)*cos(alpha) a*sin(theta);
+frame1_T_frame2 = [cos(theta) -sin(theta)*cos(alpha)  sin(theta)*sin(alpha) a*cos(theta);
+                   sin(theta)  cos(theta)*cos(alpha) -cos(theta)*sin(alpha) a*sin(theta);
                    0           sin(alpha)             cos(alpha)            d;
                    0           0                      0                     1];
 
@@ -34,8 +34,10 @@ function [x,y,z,a] = forwardkinematics(q0,q1,q2,q3)
     l2 = 100;
     l3 = 50;
     
+    a_ = 0;
+    
     %Compute Homogeneous Transformations
-    Base_T_j0 = DH_params(q0,lo,0,-pi/2);
+    Base_T_j0 = DH_params(q0,lo,a_,pi/2);
 
     j0_T_j1 = DH_params(q1,0,l1,0);
 
@@ -84,6 +86,7 @@ function plotcoord3(transform,axis_length,X_colour,Y_colour,Z_colour)
     px_point = transform*px;
     py_point = transform*py;
     pz_point = transform*pz;
+    disp(transform)
     %X axis
     plot3([x; px_point(1)], [y; px_point(2)], [z; px_point(3)], X_colour)
     hold on 
