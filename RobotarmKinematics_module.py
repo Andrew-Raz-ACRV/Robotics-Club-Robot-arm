@@ -1,8 +1,6 @@
 """
 Robot arm Kinematics Module
-
 Based on theory from Intro to Robotics
-
 Created for Semester 1 workshops 2018
 @author: Andrew Razjigaev President of QUT Robotics Club
 """
@@ -16,10 +14,10 @@ def update_joints(joint_values,dQ):
     '''
     (q1,q2,q3,q4) = joint_values
     
-    q1 = q1 + dQ[0]
-    q2 = q2 + dQ[1]
-    q3 = q3 + dQ[2]
-    q4 = q4 + dQ[3]
+    q1 = q1 + dQ[0,0]
+    q2 = q2 + dQ[1,0]
+    q3 = q3 + dQ[2,0]
+    q4 = q4 + dQ[3,0]
     
     return (q1,q2,q3,q4);
 
@@ -51,10 +49,14 @@ def ForwardKinematics(joint_values,arm_lengths):
     joint1Tjoint2 = DH_matrix(q2,0,l2,0)
     joint2Tjoint3 = DH_matrix(q3,0,l3,0)
     joint3Tgripper = DH_matrix(q4,0,l4,0)
+
+    BT2 = numpy.dot(baseTjoint1,joint1Tjoint2)
+    BT3 = numpy.dot(BT2,joint2Tjoint3)
+    baseTgripper = numpy.dot(BT3,joint3Tgripper)
     
-    baseTgripper = numpy.multi_dot(baseTjoint1,joint1Tjoint2,joint2Tjoint3,joint3Tgripper)
-    
-    x = baseTgripper[0,3], y = baseTgripper[1,3], z = baseTgripper[2,3]
+    x = baseTgripper[0,3]
+    y = baseTgripper[1,3]
+    z = baseTgripper[2,3]
     
     pitch = q2 + q3 + q4
     
@@ -70,8 +72,9 @@ def compute_error(Desired_pose,tool_point):
     ''' 
     (X,Y,Z,P) = Desired_pose
     (x,y,z,p) = tool_point
-    
-    speedlimit = 2 # mm per dt
+    #print(Desired_pose)
+    #print(tool_point)
+    speedlimit = 5 # mm per dt
     
     error = numpy.matrix([[X-x], [Y-y], [Z-z], [P-p]])
     magnitude = numpy.linalg.norm(error)
@@ -98,31 +101,28 @@ def compute_Jacobian(joint_values,arm_lengths):
            #to the origin of the joint 2 coordinate frame
     
     #Content from MATLAB jacobian using the symbolic toolbox
+
+    J = numpy.identity(4)
     
-    1_1 = -sin(q1)*(a0 + l2*cos(q2 + q3) + l1*cos(q2) + l3*cos(q2 + q3 + q4))
-    1_2 = -cos(q1)*(l2*sin(q2 + q3) + l1*sin(q2) + l3*sin(q2 + q3 + q4))
-    1_3 = -(l2*sin(q2 - q1 + q3))/2 - (l3*sin(q1 + q2 + q3 + q4))/2 - (l3*sin(q2 - q1 + q3 + q4))/2 - (l2*sin(q1 + q2 + q3))/2
-    1_4 = -(l3*(sin(q1 + q2 + q3 + q4) + sin(q2 - q1 + q3 + q4)))/2
+    J[0,0] = -sin(q1)*(a0 + l2*cos(q2 + q3) + l1*cos(q2) + l3*cos(q2 + q3 + q4))
+    J[0,1] = -cos(q1)*(l2*sin(q2 + q3) + l1*sin(q2) + l3*sin(q2 + q3 + q4))
+    J[0,2] = -(l2*sin(q2 - q1 + q3))/2 - (l3*sin(q1 + q2 + q3 + q4))/2 - (l3*sin(q2 - q1 + q3 + q4))/2 - (l2*sin(q1 + q2 + q3))/2
+    J[0,3] = -(l3*(sin(q1 + q2 + q3 + q4) + sin(q2 - q1 + q3 + q4)))/2
     
-    2_1 = cos(q1)*(a0 + l2*cos(q2 + q3) + l1*cos(q2) + l3*cos(q2 + q3 + q4))
-    2_2 = -sin(q1)*(l2*sin(q2 + q3) + l1*sin(q2) + l3*sin(q2 + q3 + q4))
-    2_3 = (l3*cos(q1 + q2 + q3 + q4))/2 - (l2*cos(q2 - q1 + q3))/2 - (l3*cos(q2 - q1 + q3 + q4))/2 + (l2*cos(q1 + q2 + q3))/2
-    2_4 = (l3*(cos(q1 + q2 + q3 + q4) - cos(q2 - q1 + q3 + q4)))/2
+    J[1,0] = cos(q1)*(a0 + l2*cos(q2 + q3) + l1*cos(q2) + l3*cos(q2 + q3 + q4))
+    J[1,1] = -sin(q1)*(l2*sin(q2 + q3) + l1*sin(q2) + l3*sin(q2 + q3 + q4))
+    J[1,2] = (l3*cos(q1 + q2 + q3 + q4))/2 - (l2*cos(q2 - q1 + q3))/2 - (l3*cos(q2 - q1 + q3 + q4))/2 + (l2*cos(q1 + q2 + q3))/2
+    J[1,3] = (l3*(cos(q1 + q2 + q3 + q4) - cos(q2 - q1 + q3 + q4)))/2
         
-    3_1 = 0
-    3_2 = -l2*cos(q2 + q3) - l1*cos(q2) - l3*cos(q2 + q3 + q4)
-    3_3 = -l2*cos(q2 + q3) - l3*cos(q2 + q3 + q4)
-    3_4 = -l3*cos(q2 + q3 + q4)
+    J[2,0] = 0
+    J[2,1] = -l2*cos(q2 + q3) - l1*cos(q2) - l3*cos(q2 + q3 + q4)
+    J[2,2] = l2*cos(q2 + q3) + l3*cos(q2 + q3 + q4)  #changed the sign
+    J[2,3] = -l3*cos(q2 + q3 + q4)
      
-    4_1 = 0
-    4_2 = 1
-    4_3 = 1
-    4_4 = 1
-     
-    J = numpy.matrix([[1_1,1_2,1_3,1_4],
-                      [2_1,2_2,2_3,2_4],
-                      [3_1,3_2,3_3,3_4],
-                      [4_1,4_2,4_3,4_4]])
+    J[3,0] = 0
+    J[3,1] = 1
+    J[3,2] = 1
+    J[3,3] = 1
     
     return J;
  
@@ -142,15 +142,13 @@ def damped_least_squares(J, Q, Qmin, Qmax):
     for ii in range(0,4):
         num = 2*Q[ii]-Qmax[ii]-Qmin[ii];
         den = Qmax[ii] - Qmin[ii];
-        Lambda[ii,ii] = c*[num/den]^p + w;
+        Lambda[ii,ii] = c*(num/den)**p + w;
 
     #Compute the damped least squares inverse
-    J_dash = J.transpose
     DL = numpy.dot(Lambda,Lambda)
-    dampening = numpy.dot(J,J_dash) + DL
+    dampening = numpy.dot(J,J.T)
+    dampening = dampening + DL
     
-    invJ = numpy.dot(J_dash,numpy.linalg.inv(dampening));
+    invJ = numpy.dot(J.T,numpy.linalg.inv(dampening));
     
     return invJ;
-
-

@@ -1,11 +1,8 @@
 """
 Robot arm Servo class Module
-
 Based on the Sparkfun Raspberry Pi Servo Hat in Example.py
-
 Created for Semester 1 workshops 2018
 @author: Andrew Razjigaev President of QUT Robotics Club
-
 About PWM from the Sparkfun Hat:
     By default, the PWM frequency of the chip is 200Hz, or one pulse every 5ms. 
     The start time register determines when the pulse goes high in the 5ms 
@@ -53,7 +50,6 @@ About PWM from the Sparkfun Hat:
     
 First point: in most OS level interactions, the I2C communication bus is 
 referred to as SMBus. Thus we get our first lines of code. 
-
 This imports the smbus module, creates an object of type SMBus, and attaches it 
 to bus “1” of the Pi’s various SMBuses. We also need time and math for later 
 use
@@ -173,22 +169,25 @@ class pi_servo:
     '''
     OUTPUT FUNCTIONS FOR MOVING THE SERVOS
     '''
-    def move_pwm(self,pwm,bus):   
+    def move_pwm(self,pwm,bus):
+        #always round just in case, get integer
+        PWM = int(round(pwm))
+        
         #Gives a pwm signal to the bus
-        bus.write_word_data(addr, self.stop, pwm) 
+        bus.write_word_data(addr, self.stop, PWM) 
         
         #RECORD THE PWM OUTPUT
-        self.last_pwm = pwm
+        self.last_pwm = PWM
         
         #Do inverse mapping to find the angle that PWM gave
         m = (self.max_PWM - self.min_PWM)/(self.max_limit - self.min_limit)
         c = self.max_PWM - m*(self.max_limit)
         
         #RECORD THE ANGLE OUTPUT
-        self.last_deg = (pwm - c)/m
+        self.last_deg = (PWM - c)/m
 
         #Give the controller some time to move
-        time.sleep(self.dt)   
+        #time.sleep(self.dt)   
         
         
 

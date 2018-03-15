@@ -1,19 +1,17 @@
 """
 Robot arm Utilities Module
-
 Functions to help control the arm
-
 Created for Semester 1 workshops 2018
 @author: Andrew Razjigaev President of QUT Robotics Club
 """
 import getch, time
 
-from math import pi
+from math import pi, degrees
 
 from RobotarmServo_module import pi_servo
 
 
-def read_keyboard(Desired_pose,grip_value):
+def read_keyboard(Desired_pose,grip_value,on):
     '''
     Reads Keyboard presses and does logic about them
     reference:
@@ -56,7 +54,8 @@ def read_keyboard(Desired_pose,grip_value):
     
     elif key == 'k':
         on = False
-     
+
+    
     #Update target pose after key presses
     Desired_pose = (X,Y,Z,P)
 
@@ -81,11 +80,15 @@ def Move_arm_to_home(m1,m2,m3,m4,m5,bus):
     '''
     print('Moving to home position')
     m1.move_deg(0,bus)
+    time.sleep(0.5) 
     m2.move_deg(135,bus)
+    time.sleep(0.5) 
     m3.move_deg(-100,bus)
+    time.sleep(0.5)
     m4.move_deg(-90,bus)
+    time.sleep(0.5)
     m5.move_pwm(550,bus)
-    time.sleep(3)    
+    time.sleep(0.5)   
 
 def Reset_robot_arm(m1,m2,m3,m4,m5,bus):
     '''
@@ -94,11 +97,11 @@ def Reset_robot_arm(m1,m2,m3,m4,m5,bus):
     print('TERMINATING ROBOT ARM')
     Move_arm_to_home(m1,m2,m3,m4,m5,bus)
     
-    m1.stop_servo(bus)
-    m2.stop_servo(bus)
-    m3.stop_servo(bus)
-    m4.stop_servo(bus)
-    m5.stop_servo(bus)
+    m1.fstop(bus)
+    m2.fstop(bus)
+    m3.fstop(bus)
+    m4.fstop(bus)
+    m5.fstop(bus)
 
 def read_arm(m1,m2,m3,m4,m5):
     '''
@@ -109,7 +112,9 @@ def read_arm(m1,m2,m3,m4,m5):
     q2 = m2.read_rad()
     q3 = m3.read_rad()
     q4 = m4.read_rad()
-
+    
+    #print(degrees(q1),degrees(q2),degrees(q3),degrees(q4))
+    
     return (q1,q2,q3,q4)
 
 
@@ -140,6 +145,8 @@ def Initialise_Robot_arm(bus):
 
     gripper = pi_servo()
     gripper._init_channel(4)
+    gripper._calibrate_servo(0,30,60)
+    gripper.define_jointlimits(0,60)
 
     #Start each joint
     m1.fstart(bus)
