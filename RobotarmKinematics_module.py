@@ -98,20 +98,21 @@ def compute_Jacobian(joint_values,arm_lengths):
            #to the origin of the joint 2 coordinate frame
     
     #Content from MATLAB jacobian using the symbolic toolbox
-    1_1 = (l2*sin(q2 - q1 + q3))/2 - sin(q1 + q2)/2 - (l3*sin(q1 + q2 + q3 + q4))/2 + (l3*sin(q2 - q1 + q3 + q4))/2 - (l1*sin(q1 - q2))/2 - (l2*sin(q1 + q2 + q3))/2
-    1_2 = (l1*sin(q1 - q2))/2 - (l2*sin(q2 - q1 + q3))/2 - (l3*sin(q1 + q2 + q3 + q4))/2 - (l3*sin(q2 - q1 + q3 + q4))/2 - sin(q1 + q2)/2 - (l2*sin(q1 + q2 + q3))/2
+    
+    1_1 = -sin(q1)*(a0 + l2*cos(q2 + q3) + l1*cos(q2) + l3*cos(q2 + q3 + q4))
+    1_2 = -cos(q1)*(l2*sin(q2 + q3) + l1*sin(q2) + l3*sin(q2 + q3 + q4))
     1_3 = -(l2*sin(q2 - q1 + q3))/2 - (l3*sin(q1 + q2 + q3 + q4))/2 - (l3*sin(q2 - q1 + q3 + q4))/2 - (l2*sin(q1 + q2 + q3))/2
     1_4 = -(l3*(sin(q1 + q2 + q3 + q4) + sin(q2 - q1 + q3 + q4)))/2
-     
-    2_1 = cos(q1)*(l2*cos(q2 + q3) + l1*cos(q2) + l3*cos(q2 + q3 + q4))
+    
+    2_1 = cos(q1)*(a0 + l2*cos(q2 + q3) + l1*cos(q2) + l3*cos(q2 + q3 + q4))
     2_2 = -sin(q1)*(l2*sin(q2 + q3) + l1*sin(q2) + l3*sin(q2 + q3 + q4))
     2_3 = (l3*cos(q1 + q2 + q3 + q4))/2 - (l2*cos(q2 - q1 + q3))/2 - (l3*cos(q2 - q1 + q3 + q4))/2 + (l2*cos(q1 + q2 + q3))/2
     2_4 = (l3*(cos(q1 + q2 + q3 + q4) - cos(q2 - q1 + q3 + q4)))/2
-     
+        
     3_1 = 0
-    3_2 = l2*cos(q2 + q3) + l1*cos(q2) + l3*cos(q2 + q3 + q4)
-    3_3 = l2*cos(q2 + q3) + l3*cos(q2 + q3 + q4)
-    3_4 = l2*cos(q2 + q3) + l3*cos(q2 + q3 + q4),   l3*cos(q2 + q3 + q4)
+    3_2 = -l2*cos(q2 + q3) - l1*cos(q2) - l3*cos(q2 + q3 + q4)
+    3_3 = -l2*cos(q2 + q3) - l3*cos(q2 + q3 + q4)
+    3_4 = -l3*cos(q2 + q3 + q4)
      
     4_1 = 0
     4_2 = 1
