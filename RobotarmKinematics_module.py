@@ -29,8 +29,8 @@ def DH_matrix(theta,d,a,alpha):
     such that:
     A = Rz(theta)*Tz(d)*Tx(a)*Rx(alpha)    
     '''
-    A = numpy.matrix([[cos(theta), -sin(theta)*cos(alpha),  sin(theta)*cos(alpha), a*cos(theta)],
-                      [sin(theta),  cos(theta)*cos(alpha), -cos(theta)*cos(alpha), a*sin(theta)],
+    A = numpy.matrix([[cos(theta), -sin(theta)*cos(alpha),  sin(theta)*sin(alpha), a*cos(theta)],
+                      [sin(theta),  cos(theta)*cos(alpha), -cos(theta)*sin(alpha), a*sin(theta)],
                       [0,           sin(alpha),             cos(alpha),            d],
                       [0,           0,                      0,                     1]])
     return A;
@@ -63,11 +63,17 @@ def compute_error(Desired_pose,tool_point):
     '''
     Computes the error column vector dX
     dX = Desired tool position - current tool position
+    With a speed limit
     ''' 
     (X,Y,Z,P) = Desired_pose
     (x,y,z,p) = tool_point
     
-    error = numpy.matrix([[X-x], [Y-y], [Z-z], [P-p]]) 
+    speedlimit = 2 # mm per dt
+    
+    error = numpy.matrix([[X-x], [Y-y], [Z-z], [P-p]])
+    norm_error = numpy.linalg.norm(error)
+    
+    error = speedlimit * (error / norm_error)
     
     return error; 
 
@@ -82,6 +88,7 @@ def compute_Jacobian(joint_values,arm_lengths):
     '''
     (q1,q2,q3,q4) = joint_values
     (lo,l1,l2,l3) = arm_lengths
+    a0 = 0
     #Content from MATLAB jacobian using the symbolic toolbox
     1_1 = (l2*sin(q2 - q1 + q3))/2 - sin(q1 + q2)/2 - (l3*sin(q1 + q2 + q3 + q4))/2 + (l3*sin(q2 - q1 + q3 + q4))/2 - (l1*sin(q1 - q2))/2 - (l2*sin(q1 + q2 + q3))/2
     1_2 = (l1*sin(q1 - q2))/2 - (l2*sin(q2 - q1 + q3))/2 - (l3*sin(q1 + q2 + q3 + q4))/2 - (l3*sin(q2 - q1 + q3 + q4))/2 - sin(q1 + q2)/2 - (l2*sin(q1 + q2 + q3))/2
