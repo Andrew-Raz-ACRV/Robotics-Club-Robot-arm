@@ -44,7 +44,10 @@ def ForwardKinematics(joint_values,arm_lengths):
     q1,q2,q3,q4 = joint_values
     l1,l2,l3,l4 = arm_lengths
     
-    baseTjoint1 = DH_matrix(q1,l1,0,pi/2)
+    a0 = 0 #odd offset is 0 only if rotating base z axis points 
+           #to the origin of the joint 2 coordinate frame
+    
+    baseTjoint1 = DH_matrix(q1,l1,a0,pi/2)
     joint1Tjoint2 = DH_matrix(q2,0,l2,0)
     joint2Tjoint3 = DH_matrix(q3,0,l3,0)
     joint3Tgripper = DH_matrix(q4,0,l4,0)
@@ -71,10 +74,12 @@ def compute_error(Desired_pose,tool_point):
     speedlimit = 2 # mm per dt
     
     error = numpy.matrix([[X-x], [Y-y], [Z-z], [P-p]])
-    norm_error = numpy.linalg.norm(error)
+    magnitude = numpy.linalg.norm(error)
     
-    error = speedlimit * (error / norm_error)
-    
+    if magnitude>speedlimit:
+        #Normalise and adjust magnitude of error vector to speed limit
+        error = speedlimit * (error / magnitude)
+        
     return error; 
 
 
@@ -88,7 +93,10 @@ def compute_Jacobian(joint_values,arm_lengths):
     '''
     (q1,q2,q3,q4) = joint_values
     (lo,l1,l2,l3) = arm_lengths
-    a0 = 0
+    
+    a0 = 0 #odd offset is 0 only if rotating base z axis points 
+           #to the origin of the joint 2 coordinate frame
+    
     #Content from MATLAB jacobian using the symbolic toolbox
     1_1 = (l2*sin(q2 - q1 + q3))/2 - sin(q1 + q2)/2 - (l3*sin(q1 + q2 + q3 + q4))/2 + (l3*sin(q2 - q1 + q3 + q4))/2 - (l1*sin(q1 - q2))/2 - (l2*sin(q1 + q2 + q3))/2
     1_2 = (l1*sin(q1 - q2))/2 - (l2*sin(q2 - q1 + q3))/2 - (l3*sin(q1 + q2 + q3 + q4))/2 - (l3*sin(q2 - q1 + q3 + q4))/2 - sin(q1 + q2)/2 - (l2*sin(q1 + q2 + q3))/2
