@@ -1,7 +1,7 @@
 - Software - Python -
 We’ll go over in some detail here how to access and use the pi servo hat in Python.
 
-
+References: https://learn.sparkfun.com/tutorials/pi-servo-hat-hookup-guide#software---python
 
 - Set Up Access to SMBus Resources - 
 
