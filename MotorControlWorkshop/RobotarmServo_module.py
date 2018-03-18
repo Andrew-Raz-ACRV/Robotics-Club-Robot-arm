@@ -3,58 +3,10 @@ Robot arm Servo class Module
 Based on the Sparkfun Raspberry Pi Servo Hat in Example.py
 Created for Semester 1 workshops 2018
 @author: Andrew Razjigaev President of QUT Robotics Club
-About PWM from the Sparkfun Hat:
-    By default, the PWM frequency of the chip is 200Hz, or one pulse every 5ms. 
-    The start time register determines when the pulse goes high in the 5ms 
-    cycle. All channels are synchronized to that cycle. Generally, this should 
-    be written to 0. The second write is to the “stop time” register, and it 
-    controls when the pulse should go low. The range for this value is from 0 
-    to 4095, and each count represents one slice of that 5ms period (5ms/4095), 
-    or about 1.2us. Thus, the value of 1250 written above represents about 
-    1.5ms of high time per 5ms period.
-    
-    Servo motors get their control signal from that pulse width. Generally 
-    speaking, a pulse width of 1.5ms yields a “neutral” position, halfway
-    between the extremes of the motor’s range. 1.0ms yields approximately 
-    90 degrees off center, and 2.0ms yields -90 degrees off center. 
-    In practice, those values may be slightly more or less than 90 degrees, 
-    and the motor may be capable of slightly more or less than 90 degrees of 
-    motion in either direction.
-    
-    To address other channels, simply increase the address of the two registers
-    above by 4. Thus, start time for channel 1 is 0x0A, for channel 2 is 0x0E, 
-    channel 3 is 0x12, etc. and stop time address for channel 1 is 0x0C, for 
-    channel 2 is 0x10, channel 3 is 0x14, etc.
-    
-    The 1.5ms end time is equal to 1.2us per count. This represents the neutral
-    position of the servo, midway between both extremes. Each degree of
-    deviation from neutral requires that number (1250) to be changed by 4.6.
-    Thus, the 90 degree offset from neutral requires that 414 counts (90*4.6)
-    be added or subtracted from 1250.  
-    These are 836 and 1664 which is why we consider these values as the 
-    default working limits; however, one can test to see how far their servo 
-    goes.
-    
-    If you write a 0 to the start address, every degree of offset from 
-    90 degrees requires 4.6 counts written to the stop address. 
-    In other words, multiply the number of degrees offset from neutral you 
-    wish to achieve by 4.6, then either add or subtract that result from 1250, 
-    depending on the direction of motion you wish. For example, a 45 degree 
-    offset from center would be 207 (45x4.6) counts either more or less than 
-    1250, depending upon the direction you desire the motion to be in.
-    
-    REFERENCE:
-    https://learn.sparkfun.com/tutorials/pi-servo-hat-hookup-guide
-    
-    
-    
-First point: in most OS level interactions, the I2C communication bus is 
-referred to as SMBus. Thus we get our first lines of code. 
-This imports the smbus module, creates an object of type SMBus, and attaches it 
-to bus “1” of the Pi’s various SMBuses. We also need time and math for later 
-use
-We have to tell the program the part’s address. By default, it is 0x40, so set 
-a variable to that for later use as well.
+
+REFERENCE:
+https://learn.sparkfun.com/tutorials/pi-servo-hat-hookup-guide
+
 """
 import smbus, time, math
 bus = smbus.SMBus(1) # the chip is on bus 1 of the available I2C buses
@@ -65,14 +17,10 @@ Next, we want to enable the PWM chip and tell it to automatically increment
 addresses after a write (that lets us do single-operation multi-byte writes).
 '''
 def initialise_piHat():
-    #initialise The I2C pi hat
-    bus = smbus.SMBus(1)  # the chip is on bus 1 of the available I2C buses
-    addr = 0x20           # I2C address of the PWM chip.
+    #initialise The I2C pi hat configurations
     bus.write_byte_data(addr, 0, 0x20)     # enable the chip
     bus.write_byte_data(addr, 0xfe, 0x1e)  # configure the chip for multi-byte write
-    
-    return (bus,addr);
-      
+
 
 class pi_servo:
     """
