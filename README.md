@@ -50,6 +50,8 @@ This Github holds the following:
 
 ## Final Demo Scripts:
 
+In the Terminal, you can run these commands to run the demos:
+
 The Robot Arm Teleoperation Script:
 ```
 python3 RobotArmRaspberryPi_Complete_Code.py
