@@ -1,0 +1,13 @@
+function J = RobotArmJacobian(q,L)
+%Given the current joint values q = [q1,q2,q3,q4] and link lengths L
+%This outputs the Jacobian matrix for the Robot arm
+%See Jacobian_solver_script.m to find out how to get Matlab to find solve
+%this matrix using the symbolic toolbox.
+q1 = q(1); q2 = q(2); q3 = q(3); q4 = q(4);
+l1 = L(1); l2 = L(2); l3 = L(3); l4 = L(4);
+
+J = [ 0.5*l4*sin(q2 - 1.0*q1 + q3 + q4) - 0.5*l2*sin(q1 - 1.0*q2) - 0.5*l4*sin(q1 + q2 + q3 + q4) - 0.5*l2*sin(q1 + q2) + 0.5*l3*sin(q2 - 1.0*q1 + q3) - 0.5*l3*sin(q1 + q2 + q3), 0.5*l2*sin(q1 - 1.0*q2) - 0.5*l4*sin(q2 - 1.0*q1 + q3 + q4) - 0.5*l4*sin(q1 + q2 + q3 + q4) - 0.5*l2*sin(q1 + q2) - 0.5*l3*sin(q2 - 1.0*q1 + q3) - 0.5*l3*sin(q1 + q2 + q3), - 0.5*l4*sin(q2 - 1.0*q1 + q3 + q4) - 0.5*l4*sin(q1 + q2 + q3 + q4) - 0.5*l3*sin(q2 - 1.0*q1 + q3) - 0.5*l3*sin(q1 + q2 + q3), - 0.5*l4*sin(q2 - 1.0*q1 + q3 + q4) - 0.5*l4*sin(q1 + q2 + q3 + q4)
+ 0.5*l2*cos(q1 - 1.0*q2) + 0.5*l4*cos(q1 + q2 + q3 + q4) + 0.5*l2*cos(q1 + q2) + 0.5*l3*cos(q2 - 1.0*q1 + q3) + 0.5*l3*cos(q1 + q2 + q3) + 0.5*l4*cos(q2 - 1.0*q1 + q3 + q4), 0.5*l4*cos(q1 + q2 + q3 + q4) - 0.5*l2*cos(q1 - 1.0*q2) + 0.5*l2*cos(q1 + q2) - 0.5*l3*cos(q2 - 1.0*q1 + q3) + 0.5*l3*cos(q1 + q2 + q3) - 0.5*l4*cos(q2 - 1.0*q1 + q3 + q4),   0.5*l4*cos(q1 + q2 + q3 + q4) - 0.5*l3*cos(q2 - 1.0*q1 + q3) + 0.5*l3*cos(q1 + q2 + q3) - 0.5*l4*cos(q2 - 1.0*q1 + q3 + q4),   0.5*l4*cos(q1 + q2 + q3 + q4) - 0.5*l4*cos(q2 - 1.0*q1 + q3 + q4)
+                                                                                                                                                                           0,                                                                                                                         l3*cos(q2 + q3) + l2*cos(q2) + l4*cos(q2 + q3 + q4),                                                                                        l3*cos(q2 + q3) + l4*cos(q2 + q3 + q4),                                                l4*cos(q2 + q3 + q4)
+                                                                                                                                                                           0,                                                                                                                                                                         1.0,                                                                                                                           1.0,                                                                 1.0];
+end
