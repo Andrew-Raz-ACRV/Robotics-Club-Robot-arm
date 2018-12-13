@@ -43,6 +43,7 @@ This Github holds the following:
 * Laser cut file (CorelDraw) of the Robot Arm
 * Parts List for Constructing the Robot Arm
 * MATLAB simulation of the inverse Kinematics provided with Andrew's Kinematics functions
+  Run the file RobotArmSimulator.m
 * Workshop Slides with Theory explained in them
 * Python scripts of the Workshop tasks
 * Python scripts of the Final Demo Scripts
