@@ -19,7 +19,7 @@ a more comprehensive parts list is in this Github as well.
 The Raspberry Pi project requires a few installations
 - Getch is for capturing keyboard presses: https://pypi.org/project/getch/
 - smbus for the i2c communication to the servo hat: https://learn.sparkfun.com/tutorials/pi-servo-hat-hookup-guide/all#software---python
-- An old version of opencv that can be installed easy and quickly 
+- An old version of opencv that can be installed easily and quickly 
 - Optional installation with matlibplot
 
 Installations for the Kinematics Half of the Project:
