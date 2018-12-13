@@ -52,7 +52,7 @@ This Github holds the following:
 
 The Robot Arm Teleoperation Script:
 ```
-
+python3 RobotArmRaspberryPi_Complete_Code.py
 ```
 
 The Robotic Vision Autonomous Picking Script:
@@ -62,7 +62,7 @@ python VisionArm.py
 
 ## Author
 
-* **Andrew Razjigaev** - *President of the QUT Robotics Club 2018* - 
+* **Andrew Razjigaev** - *President of the QUT Robotics Club 2018*  
 
 ## Acknowledgments
 
