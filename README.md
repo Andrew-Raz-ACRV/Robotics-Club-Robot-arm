@@ -81,5 +81,5 @@ python VisionArm.py
 
 ## Acknowledgments
 * Student Clubs and Projects (SCAP) Fund 2018
-* Krishan Rana - For his Development of the gripper and joints Laser cut pieces.
+* Krishan Rana - For his Development of the gripper and Laser cut pieces for the joints.
 * Marty - For his assistance with running the Computer Vision task
