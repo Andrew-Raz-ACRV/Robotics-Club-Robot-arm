@@ -12,12 +12,16 @@ This project is based on using the robotic arms designed by the club which invol
 a more comprehensive parts list is in this Github as well.
 
 ### Prerequisites
-The Raspberry Pi project requires a few installations:
+The Raspberry Pi project requires a few installations
+- Getch is for capturing keyboard presses: https://pypi.org/project/getch/
+- smbus for the i2c communication to the servo hat: https://learn.sparkfun.com/tutorials/pi-servo-hat-hookup-guide/all#software---python
+- An old version of opencv that can be installed easy and quickly 
+- Optional installation with matlibplot
 
 Installations for the Kinematics Half of the Project:
 ```
-sudo apt-get install smbus
 sudo apt-get install getch
+sudo apt-get install smbus
 ```
 
 Installations for the Computer Vision half of the project:
@@ -53,12 +57,12 @@ This Github holds the following:
 
 In the Terminal, you can run these commands to run the demos:
 
-The Robot Arm Teleoperation Script:
+The Robot Arm Teleoperation Script in Python 3:
 ```
 python3 RobotArmRaspberryPi_Complete_Code.py
 ```
 
-The Robotic Vision Autonomous Picking Script:
+The Robotic Vision Autonomous Picking Script in Python 2:
 ```
 python VisionArm.py
 ```
