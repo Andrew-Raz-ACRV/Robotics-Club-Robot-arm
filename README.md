@@ -32,14 +32,16 @@ sudo apt-get install python matlibplot
 
 ## Running Robot Arm Tests:
 
-Robot Arm Calibration:
+Robot Arm Calibration Test:
+In Robot_Arm_control_Workshops, you can test the calibration of the servos to see if they are accurate
 ```
 python calibration.py
 ```
 
-Computer Vision Thresholds:
+Computer Vision Threshold Test:
+In Computer_vision_Workshops, you can run a script to see the thresholding
 ```
-
+python test_video_blobdetection.py
 ```
 
 ## Contents on this Github:
@@ -57,12 +59,14 @@ This Github holds the following:
 
 In the Terminal, you can run these commands to run the demos:
 
-The Robot Arm Teleoperation Script in Python 3:
+The Robot Arm Teleoperation Script in Python 3
+In Teleoperation_Demo_Python3:
 ```
 python3 RobotArmRaspberryPi_Complete_Code.py
 ```
 
-The Robotic Vision Autonomous Picking Script in Python 2:
+The Robotic Vision Autonomous Picking Script in Python 2
+In VisionArm_Demo_Python2:
 ```
 python VisionArm.py
 ```
