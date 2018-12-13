@@ -76,6 +76,6 @@ python VisionArm.py
 * **Andrew Razjigaev** - *President of the QUT Robotics Club 2018*  
 
 ## Acknowledgments
-
+* Student Clubs and Projects (SCAP) Fund 2018
 * Krishan Rana - For his Development of the gripper and joints Laser cut pieces.
 * Marty - For his assistance with running the Computer Vision task
