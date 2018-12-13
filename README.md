@@ -1,9 +1,9 @@
-![alt text](https://github.com/Andrew-Raz-ACRV/Robotics-Club-Robot-arm/blob/master/QUTRCWallpaper.png){:height="50%" width="50%"}
+![alt text](https://github.com/Andrew-Raz-ACRV/Robotics-Club-Robot-arm/blob/master/QUTRCWallpaper.png)
 
 # Robotics-Club-Robot-arm
 This project is part of the 2018 workshop series for the QUT Robotics club. It is based on the unit called Introduction to Robotics which is a subject focussed on the control of a Robotic arm and the application of computer vision processes. For half the project, the focus was on developing our own brand of robotic arms (Armageddon) with a position-based inverse kinematics controller that made the toolpoint of the robot follow a trajectory given by keyboard presses. The second half expanded the work towards an autonomous picking system where the robot uses a camera to see a ball, given some reference points to its frame of reference, and plan a trajectory to pick up the ball and place it into a box.
 
-![alt text](https://github.com/Andrew-Raz-ACRV/Robotics-Club-Robot-arm/blob/master/Robot%20Arm%20pic1.png){:height="50%" width="50%"}
+![alt text](https://github.com/Andrew-Raz-ACRV/Robotics-Club-Robot-arm/blob/master/Robot%20Arm%20pic1.png)
 
 ## Getting Started with the Project
 This project is based on using the robotic arms designed by the club which involve components:
