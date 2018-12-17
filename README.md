@@ -37,9 +37,9 @@ sudo apt-get install python matlibplot
 ## Running Robot Arm Tests:
 
 Robot Arm Calibration Test:
-In Robot_Arm_control_Workshops, you can test the calibration of the servos to see if they are accurate
+In Robot Arm control Workshops, you can test the calibration of the servos to see if they are accurate
 ```
-python calibration.py
+python3 calibration.py
 ```
 
 Computer Vision Threshold Test:
