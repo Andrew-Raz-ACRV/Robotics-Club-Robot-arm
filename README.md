@@ -21,6 +21,7 @@ The Raspberry Pi project requires a few installations
 - smbus for the i2c communication to the servo hat: https://learn.sparkfun.com/tutorials/pi-servo-hat-hookup-guide/all#software---python
 - An old version of opencv that can be installed easily and quickly 
 - Optional installation with matlibplot
+- Note: you will need to enable i2c and the camera in pi configurations
 
 Installations for the Kinematics Half of the Project:
 ```
