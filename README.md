@@ -1,7 +1,7 @@
 ![alt text](https://github.com/Andrew-Raz-ACRV/Robotics-Club-Robot-arm/blob/master/QUTRCWallpaper.png)
 
 # Robotics-Club-Robot-arm
-This project is part of the 2018 workshop series for the QUT Robotics club. It is based on the unit called Introduction to Robotics which is a subject focussed on the control of a Robotic arm and the application of computer vision processes. For half the project, the focus was on developing our own brand of robotic arms (Armageddon) with a position-based inverse kinematics controller that made the toolpoint of the robot follow a trajectory given by keyboard presses. The second half expanded the work towards an autonomous picking system where the robot uses a camera to see a ball, given some reference points to its frame of reference, and plan a trajectory to pick up the ball and place it into a box.
+This project is part of the 2018 workshop series for the QUT Robotics club. It is based on the unit called Introduction to Robotics which is a subject focussed on the control of a Robotic arm and the application of computer vision processes. For half the project, the focus was on developing our own brand of robotic arms (Armageddon) with a position-based inverse kinematics controller that made the toolpoint of the robot follow a trajectory given by keyboard presses. The second half expanded the work towards an autonomous picking system where the robot uses a camera to see a ball, given some reference points to its frame of reference, and plan a trajectory to pick up the ball and place it into a box. There is also additional code to teleoperate the arm using a USB gamepad.
 
 ![alt text](https://github.com/Andrew-Raz-ACRV/Robotics-Club-Robot-arm/blob/master/Robot%20Arm%20pic1.png)
 
@@ -34,7 +34,10 @@ Installations for the Computer Vision half of the project:
 sudo apt-get install python opencv
 sudo apt-get install python matlibplot
 ```
-
+USB Gamepad Teleoperation installation:
+```
+sudo pip install evdev
+```
 ## Running Robot Arm Tests:
 
 Robot Arm Calibration Test:
@@ -49,6 +52,12 @@ In Computer_vision_Workshops, you can run a script to see the thresholding
 python test_video_blobdetection.py
 ```
 
+In Gamepad demo Test:
+Use the first line of code to determine which event the gamepad is (event3 by default)
+```
+ls /dev/input
+python gamepad_demo.py
+```
 ## Contents on this Github:
 This Github holds the following:
 * Laser cut file (CorelDraw) of the Robot Arm
@@ -74,6 +83,11 @@ The Robotic Vision Autonomous Picking Script in Python 2
 In VisionArm_Demo_Python2:
 ```
 python VisionArm.py
+```
+
+USB Gamepad teleoperation demo of Robot arm in Python 2
+```
+python RobotArm_Gamepad_teleop.py
 ```
 
 ## Author
