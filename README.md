@@ -1,4 +1,4 @@
-![alt text](https://github.com/Andrew-Raz-ACRV/Robotics-Club-Robot-arm/blob/master/QUTRCWallpaper.png)
+![alt text](QUTRCWallpaper.png)
 
 # Robotics-Club-Robot-arm
 
@@ -6,7 +6,7 @@
 
 A Raspberry Pi robot arm with inverse-kinematic teleoperation and autonomous colour-based pick-and-place, developed for the QUT Robotics Club's 2018 workshop series.
 
-![alt text](https://github.com/Andrew-Raz-ACRV/Robotics-Club-Robot-arm/blob/master/Robot%20Arm%20pic1.png)
+![alt text](Robot%20Arm%20pic1.png)
 
 The project shipped as two things: a working arm, and a progressive curriculum that took club members from servo control through kinematics to a computer-vision pipeline. It was modelled on QUT's Introduction to Robotics unit, and funded through the Student Clubs and Projects (SCAP) Fund.
 
