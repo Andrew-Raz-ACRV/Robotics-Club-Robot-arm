@@ -1,100 +1,127 @@
 ![alt text](https://github.com/Andrew-Raz-ACRV/Robotics-Club-Robot-arm/blob/master/QUTRCWallpaper.png)
 
 # Robotics-Club-Robot-arm
-This project is part of the 2018 workshop series for the QUT Robotics club. It is based on the unit called Introduction to Robotics which is a subject focussed on the control of a Robotic arm and the application of computer vision processes. For half the project, the focus was on developing our own brand of robotic arms (Armageddon) with a position-based inverse kinematics controller that made the toolpoint of the robot follow a trajectory given by keyboard presses. The second half expanded the work towards an autonomous picking system where the robot uses a camera to see a ball, given some reference points to its frame of reference, and plan a trajectory to pick up the ball and place it into a box. There is also additional code to teleoperate the arm using a USB gamepad.
+
+## Armageddon — a 4-DOF robot arm and the workshop series built around it
+
+A Raspberry Pi robot arm with inverse-kinematic teleoperation and autonomous colour-based pick-and-place, developed for the QUT Robotics Club's 2018 workshop series.
 
 ![alt text](https://github.com/Andrew-Raz-ACRV/Robotics-Club-Robot-arm/blob/master/Robot%20Arm%20pic1.png)
 
-## Getting Started with the Project
-This project is based on using the robotic arms designed by the club which involve components:
-* Raspberry Pi 3 B+ with a NOOBS sd card
-* Raspberry Pi Camera
-* Power adapter for the Raspberry Pi
-* Sparkfun Raspberry Pi Servo hat
-* Hobby King servos
-* Laser cut parts developed by the club which is on this Github
-a more comprehensive parts list is in this Github as well.
+The project shipped as two things: a working arm, and a progressive curriculum that took club members from servo control through kinematics to a computer-vision pipeline. It was modelled on QUT's Introduction to Robotics unit, and funded through the Student Clubs and Projects (SCAP) Fund.
 
-### Prerequisites
-The Raspberry Pi project requires a few installations
-- Getch is for capturing keyboard presses: https://pypi.org/project/getch/
-- smbus for the i2c communication to the servo hat: https://learn.sparkfun.com/tutorials/pi-servo-hat-hookup-guide/all#software---python
-- An old version of opencv that can be installed easily and quickly 
-- Optional installation with matlibplot
-- Note: you will need to enable i2c and the camera in pi configurations
+**Status:** archived. Built in 2018 and not maintained. The Python 2 scripts and the OpenCV version it targets are both long superseded; treat this as a teaching reference rather than a current codebase.
 
-Installations for the Kinematics Half of the Project:
-```
-sudo apt-get install getch
-sudo apt-get install smbus
-```
+<!-- GAP: a photograph of the assembled arm belongs here — it is the single most
+     useful thing that could be added, and the original README's arm photo is a good
+     candidate if re-cropped. Must work on light and dark backgrounds: no white
+     studio background. The current header image is a club wallpaper and should not
+     survive; it occupies the most valuable space on the page and says nothing. -->
 
-Installations for the Computer Vision half of the project:
-```
-sudo apt-get install python opencv
-sudo apt-get install python matlibplot
-```
-USB Gamepad Teleoperation installation:
-```
-sudo pip install evdev
-```
-## Running Robot Arm Tests:
+## What it does
 
-Robot Arm Calibration Test:
-In Robot Arm control Workshops, you can test the calibration of the servos to see if they are accurate
-```
-python3 calibration.py
-```
+**Kinematics half.** A position-based inverse-kinematic controller that drives the tool point along a trajectory from keyboard input, with USB gamepad teleoperation as an alternative. Link lengths in the DH model mirror the laser-cut structure.
 
-Computer Vision Threshold Test:
-In Computer_vision_Workshops, you can run a script to see the thresholding
-```
-python test_video_blobdetection.py
+**Vision half.** An autonomous picking routine: the arm locates a coloured ball with a single Pi Camera, plans a trajectory from a set of reference points defined in its own frame, picks the ball up and places it in a box.
+
+The camera is **uncalibrated** and the vision pipeline is colour-threshold based, so this is a demonstration of the full sense-plan-act loop rather than an accurate manipulation system.
+
+## Hardware
+
+- Raspberry Pi 3 B+ with a NOOBS SD card
+- Raspberry Pi Camera
+- SparkFun Pi Servo HAT (PCA9685, over I²C)
+- Hobby King servos
+- Laser-cut acrylic structure — CorelDraw files and a full parts list are in this repository
+
+Enable I²C and the camera in `raspi-config` before starting.
+
+## Install
+
+```bash
+# keyboard capture and I2C
+pip install getch
+sudo apt-get install python-smbus
+
+# vision half
+sudo apt-get install python-opencv python-matplotlib
+
+# gamepad teleoperation
+pip install evdev
 ```
 
-In Gamepad demo Test:
-Use the first line of code to determine which event the gamepad is (event3 by default)
-```
-ls /dev/input
-python gamepad_demo.py
-```
-## Contents on this Github:
-This Github holds the following:
-* Laser cut file (CorelDraw) of the Robot Arm
-* Parts List for Constructing the Robot Arm
-* MATLAB simulation of the inverse Kinematics provided with Andrew's Kinematics functions
-  Run the file RobotArmSimulator.m
-* Workshop Slides with Theory explained in them
-* Python scripts of the Workshop tasks
-* Python scripts of the Final Demo Scripts
+<!-- The original README had `sudo apt-get install getch` and
+     `sudo apt-get install python opencv`. Neither works: getch is a PyPI package
+     (the original's own link points at PyPI), and there is no apt package named
+     "python opencv". Corrected above.
 
+     GAP: these corrections are inferred from the package names, not verified on a
+     Pi. Worth one test run before publishing, on the repo whose entire purpose is
+     teaching people to follow instructions. -->
 
-## Final Demo Scripts:
+## Running
 
-In the Terminal, you can run these commands to run the demos:
+**Teleoperation** (Python 3), in `Teleoperation_Demo_Python3`:
 
-The Robot Arm Teleoperation Script in Python 3
-In Teleoperation_Demo_Python3:
-```
+```bash
 python3 RobotArmRaspberryPi_Complete_Code.py
 ```
 
-The Robotic Vision Autonomous Picking Script in Python 2
-In VisionArm_Demo_Python2:
-```
+**Autonomous vision picking** (Python 2), in `VisionArm_Demo_Python2`:
+
+```bash
 python VisionArm.py
 ```
 
-USB Gamepad teleoperation demo of Robot arm in Python 2
-```
+**Gamepad teleoperation** (Python 2):
+
+```bash
+ls /dev/input          # find which event the gamepad is; event3 by default
 python RobotArm_Gamepad_teleop.py
 ```
 
-## Author
+### Checking your setup
 
-* **Andrew Razjigaev** - *President of the QUT Robotics Club 2018*  
+Servo calibration, in `Robot Arm control Workshops`:
 
-## Acknowledgments
-* Student Clubs and Projects (SCAP) Fund 2018
-* Krishan Rana - For his Development of the gripper and Laser cut pieces for the joints.
-* Marty - For his assistance with running the Computer Vision task
+```bash
+python3 calibration.py
+```
+
+Vision thresholding, in `Computer_vision_Workshops`:
+
+```bash
+python test_video_blobdetection.py
+```
+
+## The workshop curriculum
+
+The teaching material is the part of this repository most likely to be useful to someone else, and it is all here:
+
+- **Workshop slides** with the underlying theory
+- **Python scripts for each workshop task**, separate from the final demo scripts, so a session can build up incrementally
+- **A MATLAB inverse-kinematics simulator** (`RobotArmSimulator.m`) for working through the kinematics away from the hardware
+- **Laser-cut files and parts list** for building the arm itself
+
+The progression runs servo control → forward and inverse kinematics → trajectory following → computer vision → autonomous pick-and-place, with each stage runnable on its own.
+
+## Licence
+
+MIT — see [LICENSE](LICENSE).
+
+<!-- RESOLVED 2026-09-07: Andrew has added MIT to the repo. This was the last
+     confirmed licence gap on the profile.
+
+     Optional refinement, not a blocker: the workshop slides and curriculum are
+     teaching material rather than code, and CC BY 4.0 is the usual companion licence
+     for that half. MIT covers everything as it stands and is perfectly serviceable —
+     worth doing only if the material gets reused enough to matter. -->
+
+
+## Credits
+
+Built for the QUT Robotics Club 2018 workshop series, during my term as club president. The mechanical design was a collaboration; I led the final integrated design, and wrote the control software, kinematics, vision pipeline and workshop curriculum, and sourced the funding.
+
+- **Krishan Rana** — CAD and laser-cut design from the end-effector through to the first joint
+- **Marty** — debugging assistance on the computer-vision task
+- **Student Clubs and Projects (SCAP) Fund, 2018** — project funding
